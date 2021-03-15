@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Adicionar Cliente{% endblock title %}
+
+{% block content %}
+    <h1>Adicionar cliente</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+
+            {% if field == form.flag_mensageiro %}
+                <div class="mb-3 form-check">
+                    <label for="{{ field.auto_id }}" class="form-check-label">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% else %}
+                <div class="mb-3">
+                    {{ field.label_tag }}
+                    {{ field }}
+                </div>
+            {% endif %}
+
+        {% endfor %}
+
+        <a href="{% url 'home' %}" class="btn btn-danger">Voltar</a>
+        <input type="submit" value="Salvar" class="btn btn-primary float-end">
+    </form>
+
+{% endblock content %}
+
+{% block scripts %}
+    window.onload = () => {
+        const toggle_mensageiro = () => {
+            let flag_mensageiro = document.querySelector('#id_flag_mensageiro')
+            let mensageiro = document.querySelector('#id_mensageiro')
+            let label_mensageiro = document.querySelector('label[for="id_mensageiro"]')
+
+            if (flag_mensageiro.checked)
+                label_mensageiro.style.display = mensageiro.style.display = 'block'
+            else
+                label_mensageiro.style.display = mensageiro.style.display = 'none'
+        }
+
+        toggle_mensageiro()
+
+        document.querySelector('#id_flag_mensageiro').onchange =
+            () => toggle_mensageiro()
+    }
+{% endblock %}

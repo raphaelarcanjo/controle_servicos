@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Adicionar Cliente{% endblock title %}
+
+{% block content %}
+    <h1>Adicionar serviço</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+
+            {% if field == form.pago %}
+                <div class="mb-3 form-check">
+                    <label for="{{ field.auto_id }}" class="form-check-label">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% elif field == form.valor %}
+                <label for="{{ field.auto_id }}">{{ field.label }}</label>
+                <div class="mb-3 input-group">
+                    <span class="input-group-text">R$</span>
+                    {{ field }}
+                </div>
+            {% else %}
+                <div class="mb-3">
+                    {{ field.label_tag }}
+                    {{ field }}
+                </div>
+            {% endif %}
+
+        {% endfor %}
+
+        <a href="{% url 'home' %}" class="btn btn-danger">Voltar</a>
+        <input type="submit" value="Salvar" class="btn btn-primary float-end">
+    </form>
+
+{% endblock content %}

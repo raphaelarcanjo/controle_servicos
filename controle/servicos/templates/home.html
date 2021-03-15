@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Lista de Serviços</h1>
+    <div class="btn-group float-end" role="group">
+        <a href="{% url 'novocliente' %}" class="btn btn-primary mb-3">Adicionar cliente</a>
+        <a href="{% url 'novoservico' %}" class="btn btn-primary mb-3">Adicionar serviço</a>
+        <a href="#" class="btn btn-secondary mb-3">Configurações</a>
+    </div>
+    {% if servicos %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Servico</th>
+                    <th>Valor</th>
+                    <th>Pago</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for servico in servicos %}
+                    <tr>
+                        <td>{{ servico.cliente }}</td>
+                        <td>{{ servico.tipo }}</td>
+                        <td>{{ servico.valor }}</td>
+                        <td>
+                            {% if servico.pago == True %}
+                                Sim
+                            {% else %}
+                                Não
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock content %}
