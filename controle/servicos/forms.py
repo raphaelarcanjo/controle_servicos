@@ -25,7 +25,10 @@ class ClienteForm(forms.ModelForm):
                 attrs={'class': 'form-control'}
             ),
             'contato': forms.TextInput(
-                attrs={'class': 'form-control'}
+                attrs={
+                    'class': 'form-control',
+                    'type': 'tel'
+                }
             ),
             'flag_mensageiro': forms.CheckboxInput(
                 attrs={'class': 'form-check-input'}

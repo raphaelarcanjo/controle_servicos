@@ -20,11 +20,11 @@
             <tbody>
                 {% for servico in servicos %}
                     <tr>
-                        <td>{{ servico.cliente }}</td>
+                        <td>{{ servico.nome }}</td>
                         <td>{{ servico.tipo }}</td>
-                        <td>{{ servico.valor }}</td>
+                        <td class="text-right">R$ {{ servico.valor }}</td>
                         <td>
-                            {% if servico.pago == True %}
+                            {% if servico.pago is True %}
                                 Sim
                             {% else %}
                                 Não
@@ -32,6 +32,12 @@
                         </td>
                     </tr>
                 {% endfor %}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="text-right"><strong>Total bruto: R$ {{ total }}</strong></td>
+                    <td class="text-right"><strong>Total liquido: R$ {{ liquido }}</strong></td>
+                </tr>
             </tbody>
         </table>
     {% endif %}
