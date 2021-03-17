@@ -10,7 +10,7 @@
         {% for field in form %}
 
             {% if field == form.pago %}
-                <div class="mb-3 form-check d-none">
+                <div class="mb-3 form-check">
                     <label for="{{ field.auto_id }}" class="form-check-label">{{ field.label }}</label>
                     {{ field }}
                 </div>
@@ -34,7 +34,22 @@
             <select class="form-select" name="cliente" id="id_cliente" required="">
                 <option value="">Selecione</option>
                 {% for cliente in clientes %}
-                    <option value="{{ cliente.id }}">{{ cliente.nome }}</option>
+                    <option value="{{ cliente.id }}" {% if servico_cliente.cliente == cliente.id %}selected{% endif %}>{{ cliente.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <select class="form-select" id="id_pago" name="pago">
+                <option value="1" {% if servico.pago is True %}selected{% endif %}>Sim</option>
+                <option value="0" {% if servico.pago is False %}selected{% endif %}>Não</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <select class="form-select" id="id_status" name="status">
+                {% for stat in status %}
+                    <option value="{{ stat.id }}" {% if servico.status == stat.id %}selected=""{% endif %}>{{ stat.nome }}</option>
                 {% endfor %}
             </select>
         </div>

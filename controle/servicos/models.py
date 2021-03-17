@@ -17,7 +17,8 @@ class Servicos(models.Model):
     tipo = models.CharField(max_length=80)
     valor = models.FloatField()
     data = models.DateField()
-    pago = models.BooleanField()
+    pago = models.BooleanField(default=0)
+    status = models.IntegerField(default=1)
 
     def __int__(self):
         return self.id

@@ -3,9 +3,9 @@
 {% block content %}
     <h1>Lista de Serviços</h1>
     <div class="btn-group float-end" role="group">
-        <a href="{% url 'novocliente' %}" class="btn btn-primary mb-3">Adicionar cliente</a>
-        <a href="{% url 'novoservico' %}" class="btn btn-primary mb-3">Adicionar serviço</a>
-        <a href="#" class="btn btn-secondary mb-3">Configurações</a>
+        <a href="{% url 'novocliente' %}" class="btn btn-primary mb-3">&#x002B; Adicionar cliente</a>
+        <a href="{% url 'novoservico' %}" class="btn btn-primary mb-3">&#x002B; Adicionar serviço</a>
+        <a href="#" class="btn btn-secondary mb-3">&#x2699; Configurações</a>
     </div>
     {% if servicos %}
         <table class="table table-striped">
@@ -15,6 +15,7 @@
                     <th>Servico</th>
                     <th>Valor</th>
                     <th>Pago</th>
+                    <th>Andamento</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,23 +23,37 @@
                     <tr>
                         <td>{{ servico.nome }}</td>
                         <td>{{ servico.tipo }}</td>
-                        <td class="text-right">R$ {{ servico.valor }}</td>
+                        <td class="text-right">R$ {{ servico.valor|floatformat:2 }}</td>
                         <td>
-                            {% if servico.pago is True %}
-                                Sim
-                            {% else %}
-                                Não
-                            {% endif %}
+                            <select class="form-select" id="pago">
+                                <option value="1" {% if servico.pago is True %}selected=""{% endif %}>Sim</option>
+                                <option value="0" {% if servico.pago is False %}selected=""{% endif %}>Não</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-select" id="status">
+                                {% for stat in status %}
+                                    <option value="{{ stat.id }}" {% if servico.status == stat.id %}selected=""{% endif %}>{{ stat.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'editarservico' servico.id %}" class="btn btn-primary" title="Editar">&#x270D;</a>
+                                <a href="#" class="btn btn-danger" title="Deletar">&#x267B;</a>
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}
                 <tr>
                     <td></td>
                     <td></td>
-                    <td class="text-right"><strong>Total bruto: R$ {{ total }}</strong></td>
-                    <td class="text-right"><strong>Total liquido: R$ {{ liquido }}</strong></td>
+                    <td class="text-right" title="Total bruto"><strong>Tb: R$ {{ total|floatformat:2 }}</strong></td>
+                    <td class="text-right" title="Total líquido" colspan="2"><strong>Tl: R$ {{ liquido|floatformat:2 }}</strong></td>
                 </tr>
             </tbody>
         </table>
+    {% else %}
+        <h3>Nenhum serviço cadastrado no momento</h3>
     {% endif %}
 {% endblock content %}
