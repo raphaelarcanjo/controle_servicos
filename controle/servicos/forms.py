@@ -1,103 +1,92 @@
 from django import forms
-from . import models
+from .models import Mensageiros, Clientes
 
 
-class ClienteForm(forms.ModelForm):
-    class Meta:
-        model = models.Clientes
-
-        mensageiros = models.Mensageiros.objects.all()
-        choices = []
-
-        for mensageiro in mensageiros:
-            choices.append((mensageiro.id, mensageiro.nome,))
-        CHOICES = tuple(choices)
-
-        fields = (
-            'nome',
-            'contato',
-            'flag_mensageiro',
-            'mensageiro',
-        )
-
-        widgets = {
-            'nome': forms.TextInput(
-                attrs={'class': 'form-control'}
-            ),
-            'contato': forms.TextInput(
-                attrs={
-                    'class': 'form-control',
-                    'type': 'tel'
-                }
-            ),
-            'flag_mensageiro': forms.CheckboxInput(
-                attrs={'class': 'form-check-input'}
-            ),
-            'mensageiro': forms.Select(
-                attrs={'type': 'date', 'class': 'form-select'},
-                choices=CHOICES
-            ),
-        }
-
-        labels = {
-            'nome': 'Nome',
-            'contato': 'Contato',
-            'flag_mensageiro': 'Mensageiro instantâneo',
-            'mensageiro': 'Mensageiro',
-        }
+mensageiros = Mensageiros.objects.all()
+clientes = Clientes.objects.all()
 
 
-class ServicosForm(forms.ModelForm):
-    class Meta:
-        model = models.Servicos
+class ClienteForm(forms.Form):
+    choices = []
 
-        fields = (
-            'tipo',
-            'valor',
-            'data',
-            'pago',
-        )
+    for mensageiro in mensageiros:
+        choices.append((mensageiro.id, mensageiro.nome,))
+    MENSAGEIROS = tuple(choices)
 
-        widgets = {
-            'tipo': forms.TextInput(
-                attrs={'class': 'form-control'}
-            ),
-            'valor': forms.TextInput(
-                attrs={
-                    'type': 'number',
-                    'min': '0.00',
-                    'step': '0.01',
-                    'class': 'form-control'
-                }
-            ),
-            'data': forms.TextInput(
-                attrs={'type': 'date', 'class': 'form-control'}
-            ),
-            'pago': forms.CheckboxInput(
-                attrs={'class': 'form-check-input'}
-            ),
-        }
+    nome = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}
+        ),
+        label='Nome'
+    )
 
-        labels = {
-            'tipo': 'Tipo',
-            'valor': 'Valor:',
-            'data': 'Data',
-            'pago': 'Pago',
-        }
+    contato = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'type': 'tel'
+            }
+        ),
+        label='Contato'
+    )
+
+    flag_mensageiro = forms.BooleanField(
+        widget=forms.CheckboxInput(
+            attrs={'class': 'form-check-input'}
+        ),
+        label='Mensageiro instantâneo'
+    )
+
+    mensageiro = forms.ChoiceField(
+        choices=MENSAGEIROS,
+        widget=forms.Select(
+            attrs={'class': 'form-select'}
+        ),
+        label='Mensageiro'
+    )
 
 
-class StatusServicoForm(forms.ModelForm):
-    class Meta:
-        model = models.StatusServico
+class ServicosForm(forms.Form):
+    choices = []
 
-        fields = ('nome',)
+    for cliente in clientes:
+        choices.append((cliente.id, cliente.nome,))
+    CLIENTES = tuple(choices)
 
-        widgets = {
-            'nome': forms.RadioSelect(
-                attrs={'class': 'form-check-input'}
-            )
-        }
+    tipo = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}
+        ),
+        label='Tipo'
+    )
 
-        labels = {
-            'nome': 'Status'
-        }
+    valor = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'class': 'form-control'}
+        ),
+        label='Valor'
+    )
+
+    data = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'type': 'date', 'class': 'form-control'}
+        ),
+        label='Data'
+    )
+
+    pago = forms.CharField(
+        widget=forms.CheckboxInput(
+            attrs={'class': 'form-check-input', 'required': False}
+        ),
+        required=False,
+        label='Pago'
+    )
+
+    cliente = forms.ChoiceField(
+        choices=CLIENTES,
+        widget=forms.Select(
+            attrs={'class': 'form-select', 'required': True}
+        ),
+        required=True,
+        label='Cliente'
+    )

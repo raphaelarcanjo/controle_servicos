@@ -36,9 +36,11 @@ def index(request):
 def adicionarCliente(request):
     form = forms.ClienteForm(request.POST or None)
 
-    if form.is_valid():
-        form.save()
-        return redirect('home')
+    if request.method == 'POST':
+        if form.is_valid():
+            form = forms.ClienteForm(request.POST)
+            form.save()
+            return redirect('home')
 
     data = {
         'form': form
@@ -49,15 +51,27 @@ def adicionarCliente(request):
 
 def adicionarServico(request):
     clientes = models.Clientes.objects.all()
-    form = forms.ServicosForm(request.POST or None)
+    form = forms.ServicosForm()
 
-    if form.is_valid():
-        servico = form.save()
-        clienteservico = models.ClienteServico()
-        clienteservico.cliente = request.POST.get('cliente')
-        clienteservico.servico = servico
-        clienteservico.save()
-        return redirect('home')
+    if request.method == 'POST':
+        form = forms.ServicosForm(request.POST)
+
+        if form.is_valid():
+            print('ok')
+            servico = models.Servicos()
+            servico.tipo = request.POST.get('tipo')
+            servico.valor = request.POST.get('valor')
+            servico.data = request.POST.get('data')
+            servico.pago = 0
+            servico.status = 1
+            servico.save()
+            servico = models.Servicos.objects.last()
+
+            clienteservico = models.ClienteServico()
+            clienteservico.cliente = request.POST.get('cliente')
+            clienteservico.servico = servico.id
+            clienteservico.save()
+            return redirect('home')
 
     data = {
         'clientes': clientes,

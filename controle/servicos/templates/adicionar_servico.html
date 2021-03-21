@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Adicionar Cliente{% endblock title %}
+{% block title %}Adicionar Serviço{% endblock title %}
 
 {% block content %}
     <h1>Adicionar serviço</h1>
@@ -28,16 +28,6 @@
             {% endif %}
 
         {% endfor %}
-
-        <div class="mb-3">
-            <label for="id_cliente">Cliente:</label>
-            <select class="form-select" name="cliente" id="id_cliente" required="">
-                <option value="">Selecione</option>
-                {% for cliente in clientes %}
-                    <option value="{{ cliente.id }}">{{ cliente.nome }}</option>
-                {% endfor %}
-            </select>
-        </div>
 
         <a href="{% url 'home' %}" class="btn btn-danger">Voltar</a>
         <input type="submit" value="Salvar" class="btn btn-primary float-end">
