@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.forms.models import model_to_dict
 from . import models, forms
 
 # Create your views here.
@@ -8,7 +7,7 @@ from . import models, forms
 def index(request):
     status = models.StatusServico.objects.all()
     servicos = models.Servicos.objects.all().raw('''
-        SELECT *, servicos_clientes.nome
+        SELECT *, servicos_clientes.nome, servicos_clienteservico.cliente
         FROM servicos_servicos
         LEFT JOIN servicos_clienteservico
         ON servicos_clienteservico.servico = servicos_servicos.id
@@ -82,21 +81,34 @@ def adicionarServico(request):
 
 
 def editarServico(request, servico_id):
-    servico = models.Servicos.objects.get(id=servico_id)
     try:
-        cliente = models.ClienteServico.objects.get(servico=servico_id)
+        servico = models.Servicos.objects.filter(id=servico_id).values()[0]
+    except models.Servicos.IndexError:
+        return redirect('home')
+    try:
+        cliente = models.ClienteServico.objects.filter(servico=servico_id).first()
     except models.ClienteServico.DoesNotExist:
         cliente = None
     status = models.StatusServico.objects.all()
     clientes = models.Clientes.objects.all()
-    form = forms.ServicosForm(request.POST, initial=model_to_dict(servico))
+    form = forms.ServicosForm(initial=servico)
 
-    if request.POST:
+    if request.method == 'POST':
+        form = forms.ServicosForm(request.POST)
         if form.is_valid():
-            servico = form.save()
-            clienteservico = models.ClienteServico()
+            servico = models.Servicos.objects.get(id=servico_id)
+            servico.tipo = request.POST.get('tipo')
+            servico.valor = request.POST.get('valor')
+            servico.data = request.POST.get('data')
+            servico.pago = int(request.POST.get('pago'))
+            servico.status = request.POST.get('status')
+            servico.save()
+            try:
+                clienteservico = models.ClienteServico.objects.get(servico=servico_id)
+            except models.ClienteServico.DoesNotExist:
+                clienteservico = models.ClienteServico()
             clienteservico.cliente = request.POST.get('cliente')
-            clienteservico.servico = servico
+            clienteservico.servico = servico_id
             clienteservico.save()
             return redirect('home')
 
@@ -109,3 +121,24 @@ def editarServico(request, servico_id):
     }
 
     return render(request, 'editar_servico.html', data)
+
+
+def editarCliente(request, cliente_id):
+    try:
+        cliente = models.Clientes.objects.filter(id=cliente_id).values()[0]
+    except models.Clientes.IndexError:
+        redirect('home')
+    form = forms.ClienteForm(initial=cliente)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form = forms.ClienteForm(request.POST)
+            form.save()
+            return redirect('home')
+
+    data = {
+        'form': form,
+        'cliente': cliente
+    }
+
+    return render(request, 'editar_cliente.html', data)

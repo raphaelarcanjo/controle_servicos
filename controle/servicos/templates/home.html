@@ -21,8 +21,16 @@
             <tbody>
                 {% for servico in servicos %}
                     <tr>
-                        <td>{{ servico.nome }}</td>
-                        <td>{{ servico.tipo }}</td>
+                        <td>
+                            {% if servico.cliente %}
+                                <a href="{% url 'editarcliente' servico.cliente %}">{{ servico.nome }}</a>
+                            {% else %}
+                                {{ servico.nome }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'editarservico' servico.id %}">{{ servico.tipo }}</a>
+                        </td>
                         <td class="text-right">R$ {{ servico.valor|floatformat:2 }}</td>
                         <td>
                             <select class="form-select" id="pago">

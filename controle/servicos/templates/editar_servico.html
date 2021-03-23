@@ -30,16 +30,6 @@
         {% endfor %}
 
         <div class="mb-3">
-            <label for="id_cliente">Cliente:</label>
-            <select class="form-select" name="cliente" id="id_cliente" required="">
-                <option value="">Selecione</option>
-                {% for cliente in clientes %}
-                    <option value="{{ cliente.id }}" {% if servico_cliente.cliente == cliente.id %}selected{% endif %}>{{ cliente.nome }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="mb-3">
             <select class="form-select" id="id_pago" name="pago">
                 <option value="1" {% if servico.pago is True %}selected{% endif %}>Sim</option>
                 <option value="0" {% if servico.pago is False %}selected{% endif %}>Não</option>
