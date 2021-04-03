@@ -16,6 +16,7 @@
                     <th>Valor</th>
                     <th>Pago</th>
                     <th>Andamento</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,19 +46,18 @@
                                 {% endfor %}
                             </select>
                         </td>
-                        <td>
+                        <td class="text-end">
                             <div class="btn-group">
                                 <a href="{% url 'editarservico' servico.id %}" class="btn btn-primary" title="Editar">&#x270D;</a>
-                                <a href="#" class="btn btn-danger" title="Deletar">&#x267B;</a>
+                                <a href="{% url 'removerservico' servico.id %}" class="btn btn-danger" title="Deletar">&#x267B;</a>
                             </div>
                         </td>
                     </tr>
                 {% endfor %}
                 <tr>
-                    <td></td>
-                    <td></td>
+                    <td colspan="2"></td>
                     <td class="text-right" title="Total bruto"><strong>Tb: R$ {{ total|floatformat:2 }}</strong></td>
-                    <td class="text-right" title="Total líquido" colspan="2"><strong>Tl: R$ {{ liquido|floatformat:2 }}</strong></td>
+                    <td class="text-right" title="Total líquido" colspan="3"><strong>Tl: R$ {{ liquido|floatformat:2 }}</strong></td>
                 </tr>
             </tbody>
         </table>

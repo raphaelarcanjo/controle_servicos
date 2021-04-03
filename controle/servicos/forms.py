@@ -34,6 +34,7 @@ class ClienteForm(forms.Form):
         widget=forms.CheckboxInput(
             attrs={'class': 'form-check-input'}
         ),
+        required=False,
         label='Mensageiro instantâneo'
     )
 
@@ -42,6 +43,7 @@ class ClienteForm(forms.Form):
         widget=forms.Select(
             attrs={'class': 'form-select'}
         ),
+        required=False,
         label='Mensageiro'
     )
 

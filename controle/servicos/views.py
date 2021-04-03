@@ -33,12 +33,17 @@ def index(request):
 
 
 def adicionarCliente(request):
-    form = forms.ClienteForm(request.POST or None)
+    form = forms.ClienteForm()
 
     if request.method == 'POST':
+        form = forms.ClienteForm(request.POST)
         if form.is_valid():
-            form = forms.ClienteForm(request.POST)
-            form.save()
+            cliente = forms.Clientes()
+            cliente.nome = request.POST.get('nome')
+            cliente.contato = request.POST.get('contato')
+            cliente.flag_mensageiro = True if request.POST.get('flag_mensageiro') else False
+            cliente.mensageiro = request.POST.get('mensageiro')
+            cliente.save()
             return redirect('home')
 
     data = {
@@ -56,7 +61,6 @@ def adicionarServico(request):
         form = forms.ServicosForm(request.POST)
 
         if form.is_valid():
-            print('ok')
             servico = models.Servicos()
             servico.tipo = request.POST.get('tipo')
             servico.valor = request.POST.get('valor')
@@ -81,13 +85,15 @@ def adicionarServico(request):
 
 
 def editarServico(request, servico_id):
-    try:
-        servico = models.Servicos.objects.filter(id=servico_id).values()[0]
-    except models.Servicos.IndexError:
+    servico = models.Servicos.objects.filter(id=servico_id).values()
+    if servico:
+        servico = servico[0]
+    else:
         return redirect('home')
-    try:
-        cliente = models.ClienteServico.objects.filter(servico=servico_id).first()
-    except models.ClienteServico.DoesNotExist:
+    cliente = models.ClienteServico.objects.filter(servico=servico_id).values()
+    if cliente:
+        cliente = cliente[0]
+    else:
         cliente = None
     status = models.StatusServico.objects.all()
     clientes = models.Clientes.objects.all()
@@ -124,10 +130,13 @@ def editarServico(request, servico_id):
 
 
 def editarCliente(request, cliente_id):
-    try:
-        cliente = models.Clientes.objects.filter(id=cliente_id).values()[0]
-    except models.Clientes.IndexError:
+    cliente = models.Clientes.objects.filter(id=cliente_id).values()
+
+    if cliente:
+        cliente = cliente[0]
+    else:
         redirect('home')
+
     form = forms.ClienteForm(initial=cliente)
 
     if request.method == 'POST':
@@ -142,3 +151,19 @@ def editarCliente(request, cliente_id):
     }
 
     return render(request, 'editar_cliente.html', data)
+
+def removerServico(request, servico_id):
+    servico = models.Servicos.objects.filter(id=servico_id).values()
+
+    if not servico:
+        return redirect('home')
+
+    if request.method == 'POST':
+        models.Servicos.objects.filter(id=servico_id).delete()
+        return redirect('home')
+
+    data = {
+        'servico': servico
+    }
+
+    return render(request, 'remover_servico.html', data)
