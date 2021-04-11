@@ -27,6 +27,34 @@
         <input type="submit" value="Salvar" class="btn btn-primary float-end">
     </form>
 
+    <hr>
+
+    <table class="table table-striped">
+        <h5>Clientes cadastrados</h5>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Contato</th>
+                <th>Mensageiro</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.id }}</td>
+                <td>
+                    <a href="{% url 'removercliente' cliente.id %}">
+                        {{ cliente.nome }}
+                    </a>
+                </td>
+                <td>{{ cliente.contato }}</td>
+                <td>{{ cliente.mensageiro_nome }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock content %}
 
 {% block scripts %}

@@ -4,5 +4,6 @@ from . import models
 # Register your models here.
 
 
-admin.site.register(models.Mensageiros)
+admin.site.register(models.Mensageiro)
 admin.site.register(models.StatusServico)
+admin.site.register(models.Cliente)

@@ -6,13 +6,13 @@ from . import models, forms
 
 def index(request):
     status = models.StatusServico.objects.all()
-    servicos = models.Servicos.objects.all().raw('''
-        SELECT *, servicos_clientes.nome, servicos_clienteservico.cliente
-        FROM servicos_servicos
+    servicos = models.Servico.objects.all().raw('''
+        SELECT *, servicos_cliente.nome, servicos_clienteservico.cliente
+        FROM servicos_servico
         LEFT JOIN servicos_clienteservico
-        ON servicos_clienteservico.servico = servicos_servicos.id
-        LEFT JOIN servicos_clientes
-        ON servicos_clientes.id = servicos_clienteservico.cliente
+        ON servicos_clienteservico.servico = servicos_servico.id
+        LEFT JOIN servicos_cliente
+        ON servicos_cliente.id = servicos_clienteservico.cliente
         ''')
     total = 0
     liquido = 0
@@ -33,12 +33,19 @@ def index(request):
 
 
 def adicionarCliente(request):
+    clientes = models.Cliente.objects.raw('''
+        SELECT servicos_cliente.*,
+        servicos_mensageiro.nome AS mensageiro_nome
+        FROM servicos_cliente
+        LEFT JOIN servicos_mensageiro
+        ON servicos_mensageiro.id = servicos_cliente.mensageiro
+    ''')
     form = forms.ClienteForm()
 
     if request.method == 'POST':
         form = forms.ClienteForm(request.POST)
         if form.is_valid():
-            cliente = forms.Clientes()
+            cliente = forms.Cliente()
             cliente.nome = request.POST.get('nome')
             cliente.contato = request.POST.get('contato')
             cliente.flag_mensageiro = True if request.POST.get('flag_mensageiro') else False
@@ -47,6 +54,7 @@ def adicionarCliente(request):
             return redirect('home')
 
     data = {
+        'clientes': clientes,
         'form': form
     }
 
@@ -54,21 +62,21 @@ def adicionarCliente(request):
 
 
 def adicionarServico(request):
-    clientes = models.Clientes.objects.all()
-    form = forms.ServicosForm()
+    clientes = models.Cliente.objects.all()
+    form = forms.ServicoForm()
 
     if request.method == 'POST':
-        form = forms.ServicosForm(request.POST)
+        form = forms.ServicoForm(request.POST)
 
         if form.is_valid():
-            servico = models.Servicos()
+            servico = models.Servico()
             servico.tipo = request.POST.get('tipo')
             servico.valor = request.POST.get('valor')
             servico.data = request.POST.get('data')
             servico.pago = 0
             servico.status = 1
             servico.save()
-            servico = models.Servicos.objects.last()
+            servico = models.Servico.objects.last()
 
             clienteservico = models.ClienteServico()
             clienteservico.cliente = request.POST.get('cliente')
@@ -85,7 +93,7 @@ def adicionarServico(request):
 
 
 def editarServico(request, servico_id):
-    servico = models.Servicos.objects.filter(id=servico_id).values()
+    servico = models.Servico.objects.filter(id=servico_id).values()
     if servico:
         servico = servico[0]
     else:
@@ -96,13 +104,13 @@ def editarServico(request, servico_id):
     else:
         cliente = None
     status = models.StatusServico.objects.all()
-    clientes = models.Clientes.objects.all()
-    form = forms.ServicosForm(initial=servico)
+    clientes = models.Cliente.objects.all()
+    form = forms.ServicoForm(initial=servico)
 
     if request.method == 'POST':
-        form = forms.ServicosForm(request.POST)
+        form = forms.ServicoForm(request.POST)
         if form.is_valid():
-            servico = models.Servicos.objects.get(id=servico_id)
+            servico = models.Servico.objects.get(id=servico_id)
             servico.tipo = request.POST.get('tipo')
             servico.valor = request.POST.get('valor')
             servico.data = request.POST.get('data')
@@ -130,7 +138,7 @@ def editarServico(request, servico_id):
 
 
 def editarCliente(request, cliente_id):
-    cliente = models.Clientes.objects.filter(id=cliente_id).values()
+    cliente = models.Cliente.objects.filter(id=cliente_id).values()
 
     if cliente:
         cliente = cliente[0]
@@ -152,14 +160,15 @@ def editarCliente(request, cliente_id):
 
     return render(request, 'editar_cliente.html', data)
 
+
 def removerServico(request, servico_id):
-    servico = models.Servicos.objects.filter(id=servico_id).values()
+    servico = models.Servico.objects.get(id=servico_id)
 
     if not servico:
         return redirect('home')
 
     if request.method == 'POST':
-        models.Servicos.objects.filter(id=servico_id).delete()
+        models.Servico.objects.filter(id=servico_id).delete()
         return redirect('home')
 
     data = {
@@ -167,3 +176,20 @@ def removerServico(request, servico_id):
     }
 
     return render(request, 'remover_servico.html', data)
+
+
+def removerCliente(request, cliente_id):
+    cliente = models.Cliente.objects.get(id=cliente_id)
+
+    if not cliente:
+        return redirect('home')
+
+    if request.method == 'POST':
+        models.Cliente.objects.filter(id=cliente_id).delete()
+        return redirect('home')
+
+    data = {
+        'cliente': cliente
+    }
+
+    return render(request, 'remover_cliente.html', data)

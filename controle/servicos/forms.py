@@ -1,9 +1,9 @@
 from django import forms
-from .models import Mensageiros, Clientes
+from .models import Mensageiro, Cliente
 
 
-mensageiros = Mensageiros.objects.all()
-clientes = Clientes.objects.all()
+mensageiros = Mensageiro.objects.all()
+clientes = Cliente.objects.all()
 
 
 class ClienteForm(forms.Form):
@@ -48,7 +48,7 @@ class ClienteForm(forms.Form):
     )
 
 
-class ServicosForm(forms.Form):
+class ServicoForm(forms.Form):
     choices = []
 
     for cliente in clientes:

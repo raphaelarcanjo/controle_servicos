@@ -4,6 +4,7 @@
 
 {% block content %}
     <h1>Editar cliente</h1>
+    <a href="{{ url 'removerCliente' cliente.id }}" class="btn btn-danger float-end">Remover cliente</a>
 
     <form method="post">
         {% csrf_token %}
