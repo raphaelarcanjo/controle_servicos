@@ -37,6 +37,7 @@
                 <th>Nome</th>
                 <th>Contato</th>
                 <th>Mensageiro</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -44,12 +45,18 @@
             <tr>
                 <td>{{ cliente.id }}</td>
                 <td>
-                    <a href="{% url 'removercliente' cliente.id %}">
+                    <a href="{% url 'editarcliente' cliente.id %}">
                         {{ cliente.nome }}
                     </a>
                 </td>
                 <td>{{ cliente.contato }}</td>
                 <td>{{ cliente.mensageiro_nome }}</td>
+                <td>
+                    <div class="btn-group float-end">
+                        <a href="{% url 'editarcliente' cliente.id %}" class="btn btn-primary">&#x270D;</a>
+                        <a href="{% url 'removercliente' cliente.id %}" class="btn btn-danger">&#x267B;</a>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -58,18 +65,20 @@
 {% endblock content %}
 
 {% block scripts %}
-    window.onload = () => {
-        const toggle_mensageiro = () => {
-            let flag_mensageiro = document.querySelector('#id_flag_mensageiro')
-            let mensageiro = document.querySelector('#id_mensageiro')
-            let label_mensageiro = document.querySelector('label[for="id_mensageiro"]')
+    const toggle_mensageiro = () => {
+        let flag_mensageiro = document.querySelector('#id_flag_mensageiro')
+        let mensageiro = document.querySelector('#id_mensageiro')
+        let label_mensageiro = document.querySelector('label[for="id_mensageiro"]')
 
-            if (flag_mensageiro.checked)
-                label_mensageiro.style.display = mensageiro.style.display = 'block'
-            else
-                label_mensageiro.style.display = mensageiro.style.display = 'none'
+        if (flag_mensageiro.checked)
+            label_mensageiro.style.display = mensageiro.style.display = 'block'
+        else {
+            label_mensageiro.style.display = mensageiro.style.display = 'none'
+            mensageiro.value = ''
         }
+    }
 
+    window.onload = () => {
         toggle_mensageiro()
 
         document.querySelector('#id_flag_mensageiro').onchange =

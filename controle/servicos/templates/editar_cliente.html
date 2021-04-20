@@ -4,7 +4,9 @@
 
 {% block content %}
     <h1>Editar cliente</h1>
-    <a href="{{ url 'removerCliente' cliente.id }}" class="btn btn-danger float-end">Remover cliente</a>
+    <div class="text-end mb-3">
+        <a href="{% url 'removercliente' cliente.id %}" class="btn btn-danger">Remover cliente</a>
+    </div>
 
     <form method="post">
         {% csrf_token %}
@@ -31,18 +33,20 @@
 {% endblock content %}
 
 {% block scripts %}
-    window.onload = () => {
-        const toggle_mensageiro = () => {
-            let flag_mensageiro = document.querySelector('#id_flag_mensageiro')
-            let mensageiro = document.querySelector('#id_mensageiro')
-            let label_mensageiro = document.querySelector('label[for="id_mensageiro"]')
+    const toggle_mensageiro = () => {
+        let flag_mensageiro = document.querySelector('#id_flag_mensageiro')
+        let mensageiro = document.querySelector('#id_mensageiro')
+        let label_mensageiro = document.querySelector('label[for="id_mensageiro"]')
 
-            if (flag_mensageiro.checked)
-                label_mensageiro.style.display = mensageiro.style.display = 'block'
-            else
-                label_mensageiro.style.display = mensageiro.style.display = 'none'
+        if (flag_mensageiro.checked)
+            label_mensageiro.style.display = mensageiro.style.display = 'block'
+        else {
+            label_mensageiro.style.display = mensageiro.style.display = 'none'
+            mensageiro.value = ''
         }
+    }
 
+    window.onload = () => {
         toggle_mensageiro()
 
         document.querySelector('#id_flag_mensageiro').onchange =

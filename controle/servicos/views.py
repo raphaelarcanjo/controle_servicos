@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
+# from django.contrib.messages import constants as message_constants
 from . import models, forms
+from datetime import datetime
 
 # Create your views here.
 
@@ -63,7 +66,7 @@ def adicionarCliente(request):
 
 def adicionarServico(request):
     clientes = models.Cliente.objects.all()
-    form = forms.ServicoForm()
+    form = forms.ServicoForm({'data': datetime.now().strftime('%Y-%m-%d')})
 
     if request.method == 'POST':
         form = forms.ServicoForm(request.POST)
@@ -97,6 +100,7 @@ def editarServico(request, servico_id):
     if servico:
         servico = servico[0]
     else:
+        messages.error(request, 'Serviço não encontrado')
         return redirect('home')
     cliente = models.ClienteServico.objects.filter(servico=servico_id).values()
     if cliente:
@@ -143,7 +147,8 @@ def editarCliente(request, cliente_id):
     if cliente:
         cliente = cliente[0]
     else:
-        redirect('home')
+        messages.error(request, 'Cliente não encontrado')
+        return redirect('home')
 
     form = forms.ClienteForm(initial=cliente)
 
@@ -162,9 +167,12 @@ def editarCliente(request, cliente_id):
 
 
 def removerServico(request, servico_id):
-    servico = models.Servico.objects.get(id=servico_id)
+    servico = models.Servico.objects.filter(id=servico_id).values()
 
-    if not servico:
+    if servico:
+        servico = servico[0]
+    else:
+        messages.error(request, 'Serviço não encontrado')
         return redirect('home')
 
     if request.method == 'POST':
@@ -179,9 +187,12 @@ def removerServico(request, servico_id):
 
 
 def removerCliente(request, cliente_id):
-    cliente = models.Cliente.objects.get(id=cliente_id)
+    cliente = models.Cliente.objects.filter(id=cliente_id).values()
 
-    if not cliente:
+    if cliente:
+        cliente = cliente[0]
+    else:
+        messages.error(request, 'Cliente não encontrado')
         return redirect('home')
 
     if request.method == 'POST':

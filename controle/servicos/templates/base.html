@@ -19,6 +19,14 @@
     <header class="mb-3">
         {% block header %}
         {% endblock header %}
+        {% if messages %}
+            {% for message in messages %}
+                <ul class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                    <li>{{ message }}</li>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </ul>
+            {% endfor %}
+        {% endif %}
     </header>
     <main class="container">
         {% block content %}

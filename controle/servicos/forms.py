@@ -7,7 +7,7 @@ clientes = Cliente.objects.all()
 
 
 class ClienteForm(forms.Form):
-    choices = []
+    choices = [('', 'Selecione')]
 
     for mensageiro in mensageiros:
         choices.append((mensageiro.id, mensageiro.nome,))
@@ -49,7 +49,7 @@ class ClienteForm(forms.Form):
 
 
 class ServicoForm(forms.Form):
-    choices = []
+    choices = [('', 'Selecione')]
 
     for cliente in clientes:
         choices.append((cliente.id, cliente.nome,))
