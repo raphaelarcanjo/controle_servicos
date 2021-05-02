@@ -8,31 +8,7 @@ from datetime import datetime
 
 
 def index(request):
-    status = models.StatusServico.objects.all()
-    servicos = models.Servico.objects.all().raw('''
-        SELECT *, servicos_cliente.nome, servicos_clienteservico.cliente
-        FROM servicos_servico
-        LEFT JOIN servicos_clienteservico
-        ON servicos_clienteservico.servico = servicos_servico.id
-        LEFT JOIN servicos_cliente
-        ON servicos_cliente.id = servicos_clienteservico.cliente
-        ''')
-    total = 0
-    liquido = 0
-
-    for servico in servicos:
-        total += int(servico.valor)
-        if servico.pago is True:
-            liquido += int(servico.valor)
-
-    data = {
-        'total': total,
-        'liquido': liquido,
-        'servicos': servicos,
-        'status': status
-    }
-
-    return render(request, 'home.html', data)
+    return render(request, 'home.html')
 
 
 def adicionarCliente(request):
@@ -67,6 +43,22 @@ def adicionarCliente(request):
 def adicionarServico(request):
     clientes = models.Cliente.objects.all()
     form = forms.ServicoForm({'data': datetime.now().strftime('%Y-%m-%d')})
+    status = models.StatusServico.objects.all()
+    servicos = models.Servico.objects.all().raw('''
+        SELECT *, servicos_cliente.nome, servicos_clienteservico.cliente
+        FROM servicos_servico
+        LEFT JOIN servicos_clienteservico
+        ON servicos_clienteservico.servico = servicos_servico.id
+        LEFT JOIN servicos_cliente
+        ON servicos_cliente.id = servicos_clienteservico.cliente
+        ''')
+    total = 0
+    liquido = 0
+
+    for servico in servicos:
+        total += int(servico.valor)
+        if servico.pago is True:
+            liquido += int(servico.valor)
 
     if request.method == 'POST':
         form = forms.ServicoForm(request.POST)
@@ -89,7 +81,11 @@ def adicionarServico(request):
 
     data = {
         'clientes': clientes,
-        'form': form
+        'form': form,
+        'total': total,
+        'liquido': liquido,
+        'servicos': servicos,
+        'status': status
     }
 
     return render(request, 'adicionar_servico.html', data)
@@ -204,3 +200,28 @@ def removerCliente(request, cliente_id):
     }
 
     return render(request, 'remover_cliente.html', data)
+
+
+def relatorio(request):
+    mes = request.GET.get('mes') if request.GET.get('mes') else str(datetime.now().strftime('%m'))
+    meses = {
+        '01': 'Janeiro',
+        '02': 'Fevereiro',
+        '03': 'Março',
+        '04': 'Abril',
+        '05': 'Maio',
+        '06': 'Junho',
+        '07': 'Julho',
+        '08': 'Agosto',
+        '09': 'Setembro',
+        '10': 'Outubro',
+        '11': 'Novembro',
+        '12': 'Desembro',
+    }
+
+    data = {
+        'mes': mes,
+        'meses': meses
+    }
+
+    return render(request, 'relatorio.html', data)

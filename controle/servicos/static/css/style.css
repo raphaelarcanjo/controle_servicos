@@ -1,4 +1,7 @@
-#id_mensageiro,
-label[for='id_mensageiro'] {
+#mensageiro_select {
     display: none;
+}
+
+#id_flag_mensageiro:checked ~ #mensageiro_select {
+    display: block;
 }

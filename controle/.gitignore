@@ -1,4 +1,2 @@
-servicos/__pycache__
-migrations/__pycache__
-controle/__pycache__
+*/__pycache__
 db.sqlite3

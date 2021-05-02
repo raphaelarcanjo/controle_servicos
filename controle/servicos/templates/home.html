@@ -1,67 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Lista de Serviços</h1>
-    <div class="btn-group float-end" role="group">
-        <a href="{% url 'novocliente' %}" class="btn btn-primary mb-3">&#x002B; Adicionar cliente</a>
-        <a href="{% url 'novoservico' %}" class="btn btn-primary mb-3">&#x002B; Adicionar serviço</a>
-        <a href="admin" class="btn btn-secondary mb-3" target="_blank">&#x2699; Configurações</a>
+    <h1>Controle de serviços</h1>
+    <div class="btn-group" role="group">
+        <a href="{% url 'novocliente' %}" class="btn btn-primary mb-3">&#x1F465; Clientes</a>
+        <a href="{% url 'novoservico' %}" class="btn btn-primary mb-3">&#x1F4E6; Serviços</a>
+        <a href="{% url 'relatorio' %}" class="btn btn-primary mb-3">&#x1F4B2; Relatório</a>
+        <a href="admin" class="btn btn-secondary mb-3" target="_blank">&#x1F527; Configurações</a>
     </div>
-    {% if servicos %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Cliente</th>
-                    <th>Servico</th>
-                    <th>Valor</th>
-                    <th>Pago</th>
-                    <th>Andamento</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for servico in servicos %}
-                    <tr>
-                        <td>
-                            {% if servico.cliente %}
-                                <a href="{% url 'editarcliente' servico.cliente %}">{{ servico.nome }}</a>
-                            {% else %}
-                                {{ servico.nome }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="{% url 'editarservico' servico.id %}">{{ servico.tipo }}</a>
-                        </td>
-                        <td class="text-right">R$ {{ servico.valor|floatformat:2 }}</td>
-                        <td>
-                            <select class="form-select" id="pago">
-                                <option value="1" {% if servico.pago is True %}selected=""{% endif %}>Sim</option>
-                                <option value="0" {% if servico.pago is False %}selected=""{% endif %}>Não</option>
-                            </select>
-                        </td>
-                        <td>
-                            <select class="form-select" id="status">
-                                {% for stat in status %}
-                                    <option value="{{ stat.id }}" {% if servico.status == stat.id %}selected=""{% endif %}>{{ stat.nome }}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td class="text-end">
-                            <div class="btn-group">
-                                <a href="{% url 'editarservico' servico.id %}" class="btn btn-primary" title="Editar">&#x270D;</a>
-                                <a href="{% url 'removerservico' servico.id %}" class="btn btn-danger" title="Deletar">&#x267B;</a>
-                            </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-                <tr>
-                    <td colspan="2"></td>
-                    <td class="text-right" title="Total bruto"><strong>Tb: R$ {{ total|floatformat:2 }}</strong></td>
-                    <td class="text-right" title="Total líquido" colspan="3"><strong>Tl: R$ {{ liquido|floatformat:2 }}</strong></td>
-                </tr>
-            </tbody>
-        </table>
-    {% else %}
-        <h3>Nenhum serviço cadastrado no momento</h3>
-    {% endif %}
 {% endblock content %}

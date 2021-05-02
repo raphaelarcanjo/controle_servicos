@@ -10,46 +10,25 @@
 
     <form method="post">
         {% csrf_token %}
-        {% for field in form %}
-
-            {% if field == form.flag_mensageiro %}
-                <div class="mb-3 form-check">
-                    <label for="{{ field.auto_id }}" class="form-check-label">{{ field.label }}</label>
-                    {{ field }}
-                </div>
-            {% else %}
-                <div class="mb-3">
-                    {{ field.label_tag }}
-                    {{ field }}
-                </div>
-            {% endif %}
-
-        {% endfor %}
+        <div class="mb-3">
+            {{ form.nome.label_tag }}
+            {{ form.nome }}
+        </div>
+        <div class="mb-3">
+            {{ form.contato.label_tag }}
+            {{ form.contato }}
+        </div>
+        <div class="mb-3 form-check">
+            <label for="{{ form.flag_mensageiro.auto_id }}" class="form-check-label">{{ form.flag_mensageiro.label }}</label>
+            {{ form.flag_mensageiro }}
+            <div id="mensageiro_select" class="mt-3">
+                {{ form.mensageiro.label_tag }}
+                {{ form.mensageiro }}
+            </div>
+        </div>
 
         <a href="{% url 'home' %}" class="btn btn-danger">Voltar</a>
         <input type="submit" value="Salvar" class="btn btn-primary float-end">
     </form>
 
 {% endblock content %}
-
-{% block scripts %}
-    const toggle_mensageiro = () => {
-        let flag_mensageiro = document.querySelector('#id_flag_mensageiro')
-        let mensageiro = document.querySelector('#id_mensageiro')
-        let label_mensageiro = document.querySelector('label[for="id_mensageiro"]')
-
-        if (flag_mensageiro.checked)
-            label_mensageiro.style.display = mensageiro.style.display = 'block'
-        else {
-            label_mensageiro.style.display = mensageiro.style.display = 'none'
-            mensageiro.value = ''
-        }
-    }
-
-    window.onload = () => {
-        toggle_mensageiro()
-
-        document.querySelector('#id_flag_mensageiro').onchange =
-            () => toggle_mensageiro()
-    }
-{% endblock %}

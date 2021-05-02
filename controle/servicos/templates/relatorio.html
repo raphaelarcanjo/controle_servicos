@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Relatório{% endblock title %}
+
+{% block content %}
+    <h1>Relatório</h1>
+
+    <form action="" method="get">
+        <div class="mb-3">
+            <select name="mes" id="mes" class="form-select" onchange="javascript: this.form.submit()">
+                {% for n, m in meses.items %}
+                    <option value="{{ n }}" {% if n == mes %}selected=""{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <h3>Sendo implementado</h3>
+
+    <div class="mb-3">
+        <a href="{% url 'home' %}" class="btn btn-danger">Voltar</a>
+    </div>
+{% endblock content %}
