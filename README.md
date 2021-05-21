@@ -10,3 +10,13 @@ Novas funcionalidades serão implementadas em breve.
 - [x] Cadastro de cliente
 - [x] Cadastro de produtos
 - [ ] Relatórios
+
+### Dependências
+
+É necessário ter o Python 3 instalado e o framework django.
+Caso não tenha o django instalado, digite no terminal:
+`pip install Django`
+
+### Inicialização
+
+`python manage.py runserver`
