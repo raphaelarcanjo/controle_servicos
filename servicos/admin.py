@@ -6,4 +6,3 @@ from . import models
 
 admin.site.register(models.Mensageiro)
 admin.site.register(models.StatusServico)
-admin.site.register(models.Cliente)

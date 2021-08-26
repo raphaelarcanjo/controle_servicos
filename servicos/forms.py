@@ -1,9 +1,10 @@
 from django import forms
-from .models import Mensageiro, Cliente
+from . import models
 
 
-mensageiros = Mensageiro.objects.all()
-clientes = Cliente.objects.all()
+mensageiros = models.Mensageiro.objects.all().order_by('nome')
+clientes = models.Cliente.objects.all().order_by('nome')
+status = models.StatusServico.objects.all().order_by('nome')
 
 
 class ClienteForm(forms.Form):
@@ -49,11 +50,17 @@ class ClienteForm(forms.Form):
 
 
 class ServicoForm(forms.Form):
-    choices = [('', 'Selecione')]
+    choices = []
 
     for cliente in clientes:
         choices.append((cliente.id, cliente.nome,))
     CLIENTES = tuple(choices)
+
+    choices = [('', 'Selecione')]
+
+    for stat in status:
+        choices.append((stat.id, stat.nome,))
+    STATUS = tuple(choices)
 
     tipo = forms.CharField(
         widget=forms.TextInput(
@@ -63,8 +70,8 @@ class ServicoForm(forms.Form):
     )
 
     valor = forms.CharField(
-        widget=forms.TextInput(
-            attrs={'class': 'form-control'}
+        widget=forms.NumberInput(
+            attrs={'class': 'form-control', 'step': '0.01'}
         ),
         label='Valor'
     )
@@ -91,4 +98,13 @@ class ServicoForm(forms.Form):
         ),
         required=True,
         label='Cliente'
+    )
+
+    status = forms.ChoiceField(
+        choices=STATUS,
+        widget=forms.Select(
+            attrs={'class': 'form-select', 'required': True}
+        ),
+        required=True,
+        label='Status'
     )

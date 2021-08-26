@@ -1,3 +1,4 @@
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 # from django.contrib.messages import constants as message_constants
@@ -12,25 +13,19 @@ def index(request):
 
 
 def adicionarCliente(request):
-    clientes = models.Cliente.objects.raw('''
-        SELECT servicos_cliente.*,
-        servicos_mensageiro.nome AS mensageiro_nome
-        FROM servicos_cliente
-        LEFT JOIN servicos_mensageiro
-        ON servicos_mensageiro.id = servicos_cliente.mensageiro
-    ''')
-    form = forms.ClienteForm()
-
     if request.method == 'POST':
         form = forms.ClienteForm(request.POST)
         if form.is_valid():
-            cliente = forms.Cliente()
+            cliente = models.Cliente()
+            mensageiro = models.Mensageiro.objects.get(id=request.POST.get('mensageiro'))
             cliente.nome = request.POST.get('nome')
             cliente.contato = request.POST.get('contato')
             cliente.flag_mensageiro = True if request.POST.get('flag_mensageiro') else False
-            cliente.mensageiro = request.POST.get('mensageiro')
+            cliente.mensageiro = mensageiro
             cliente.save()
-            return redirect('home')
+
+    clientes = models.Cliente.objects.all().select_related('mensageiro')
+    form = forms.ClienteForm()
 
     data = {
         'clientes': clientes,
@@ -41,50 +36,46 @@ def adicionarCliente(request):
 
 
 def adicionarServico(request):
-    clientes = models.Cliente.objects.all()
-    form = forms.ServicoForm({'data': datetime.now().strftime('%Y-%m-%d')})
-    status = models.StatusServico.objects.all()
-    servicos = models.Servico.objects.all().raw('''
-        SELECT *, servicos_cliente.nome, servicos_clienteservico.cliente
-        FROM servicos_servico
-        LEFT JOIN servicos_clienteservico
-        ON servicos_clienteservico.servico = servicos_servico.id
-        LEFT JOIN servicos_cliente
-        ON servicos_cliente.id = servicos_clienteservico.cliente
-        ''')
-    total = 0
-    liquido = 0
-
-    for servico in servicos:
-        total += int(servico.valor)
-        if servico.pago is True:
-            liquido += int(servico.valor)
-
     if request.method == 'POST':
         form = forms.ServicoForm(request.POST)
 
         if form.is_valid():
             servico = models.Servico()
+            status = models.StatusServico.objects.get(id=request.POST.get('status'))
             servico.tipo = request.POST.get('tipo')
             servico.valor = request.POST.get('valor')
             servico.data = request.POST.get('data')
             servico.pago = 0
-            servico.status = 1
+            servico.status = status
             servico.save()
+
             servico = models.Servico.objects.last()
+            cliente = models.Cliente.objects.get(id=request.POST.get('cliente'))
 
             clienteservico = models.ClienteServico()
-            clienteservico.cliente = request.POST.get('cliente')
-            clienteservico.servico = servico.id
+            clienteservico.cliente = cliente
+            clienteservico.servico = servico
             clienteservico.save()
-            return redirect('home')
+
+    clientes = models.Cliente.objects.all()
+    form = forms.ServicoForm({'data': datetime.now().strftime('%Y-%m-%d')})
+    status = models.StatusServico.objects.all()
+    clienteservico = models.ClienteServico.objects.all().select_related('servico', 'cliente')
+    total = 0
+    liquido = 0
+
+    for sc in clienteservico.values_list('servico_id'):
+        servico = models.Servico.objects.get(id=sc[0])
+        total += float(servico.valor)
+        if servico.pago is True:
+            liquido += float(servico.valor)
 
     data = {
         'clientes': clientes,
         'form': form,
         'total': total,
         'liquido': liquido,
-        'servicos': servicos,
+        'clienteservico': clienteservico,
         'status': status
     }
 
@@ -92,45 +83,44 @@ def adicionarServico(request):
 
 
 def editarServico(request, servico_id):
-    servico = models.Servico.objects.filter(id=servico_id).values()
-    if servico:
-        servico = servico[0]
-    else:
-        messages.error(request, 'Serviço não encontrado')
-        return redirect('home')
-    cliente = models.ClienteServico.objects.filter(servico=servico_id).values()
-    if cliente:
-        cliente = cliente[0]
-    else:
-        cliente = None
-    status = models.StatusServico.objects.all()
-    clientes = models.Cliente.objects.all()
-    form = forms.ServicoForm(initial=servico)
-
     if request.method == 'POST':
         form = forms.ServicoForm(request.POST)
         if form.is_valid():
             servico = models.Servico.objects.get(id=servico_id)
+            if request.POST.get('status'):
+                status = models.StatusServico.objects.get(id=request.POST.get('status'))
+            else:
+                status = None
             servico.tipo = request.POST.get('tipo')
             servico.valor = request.POST.get('valor')
             servico.data = request.POST.get('data')
-            servico.pago = int(request.POST.get('pago'))
-            servico.status = request.POST.get('status')
+            servico.pago = True if request.POST.get('pago') else False
+            servico.status = status
             servico.save()
-            try:
-                clienteservico = models.ClienteServico.objects.get(servico=servico_id)
-            except models.ClienteServico.DoesNotExist:
-                clienteservico = models.ClienteServico()
-            clienteservico.cliente = request.POST.get('cliente')
-            clienteservico.servico = servico_id
+
+            clienteservico = models.ClienteServico.objects.get(id=request.POST.get('clienteservico_id'))
+            clienteservico.cliente = models.Cliente.objects.get(id=request.POST.get('cliente'))
             clienteservico.save()
-            return redirect('home')
+            return redirect('novoservico')
+
+    try:
+        servico = models.Servico.objects.filter(id=servico_id).select_related('status').only('id')
+    except:
+        messages.error(request, 'Serviço não encontrado')
+        return redirect('novoservico')
+
+    clienteservico = models.ClienteServico.objects.get(servico_id=servico_id)
+    status = models.StatusServico.objects.all()
+    clientes = models.Cliente.objects.all()
+    formdata = servico.values().get()
+    formdata['status'] = formdata['status_id']
+    formdata['cliente'] = clienteservico.cliente_id
+    form = forms.ServicoForm(initial=formdata)
 
     data = {
-        'servico': servico,
+        'clienteservico': clienteservico,
         'status': status,
         'clientes': clientes,
-        'servico_cliente': cliente,
         'form': form
     }
 
@@ -138,21 +128,29 @@ def editarServico(request, servico_id):
 
 
 def editarCliente(request, cliente_id):
-    cliente = models.Cliente.objects.filter(id=cliente_id).values()
+    if request.method == 'POST':
+        form = forms.ClienteForm(request.POST)
+        if form.is_valid():
+            cliente = models.Cliente.objects.get(id=cliente_id)
+            if request.POST.get('mensageiro') and request.POST.get('flag_mensageiro'):
+                mensageiro = models.Mensageiro.objects.get(id=request.POST.get('mensageiro'))
+            else:
+                mensageiro = None
+            cliente.nome = request.POST.get('nome')
+            cliente.contato = request.POST.get('contato')
+            cliente.flag_mensageiro = True if request.POST.get('flag_mensageiro') else False
+            cliente.mensageiro = mensageiro
+            cliente.save()
+            return redirect('novocliente')
 
-    if cliente:
-        cliente = cliente[0]
-    else:
+    try:
+        cliente = models.Cliente.objects.filter(id=cliente_id).select_related('mensageiro').only('id').values().get()
+    except models.Cliente.DoesNotExist:
         messages.error(request, 'Cliente não encontrado')
         return redirect('home')
 
+    cliente['mensageiro'] = cliente['mensageiro_id']
     form = forms.ClienteForm(initial=cliente)
-
-    if request.method == 'POST':
-        if form.is_valid():
-            form = forms.ClienteForm(request.POST)
-            form.save()
-            return redirect('home')
 
     data = {
         'form': form,

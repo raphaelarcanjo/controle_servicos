@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Editar Cliente{% endblock title %}
+{% block title %}Editar Serviço{% endblock title %}
 
 {% block content %}
     <h1>Editar serviço</h1>
 
     <form method="post">
         {% csrf_token %}
+        <input type="hidden" name="clienteservico_id" value="{{clienteservico.id}}">
         {% for field in form %}
 
             {% if field == form.pago %}
@@ -29,22 +30,7 @@
 
         {% endfor %}
 
-        <div class="mb-3">
-            <select class="form-select" id="id_pago" name="pago">
-                <option value="1" {% if servico.pago is True %}selected{% endif %}>Sim</option>
-                <option value="0" {% if servico.pago is False %}selected{% endif %}>Não</option>
-            </select>
-        </div>
-
-        <div class="mb-3">
-            <select class="form-select" id="id_status" name="status">
-                {% for stat in status %}
-                    <option value="{{ stat.id }}" {% if servico.status == stat.id %}selected=""{% endif %}>{{ stat.nome }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <a href="{% url 'home' %}" class="btn btn-danger">Voltar</a>
+        <a href="{% url 'novoservico' %}" class="btn btn-danger">Voltar</a>
         <input type="submit" value="Salvar" class="btn btn-primary float-end">
     </form>
 

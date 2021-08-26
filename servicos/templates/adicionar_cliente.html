@@ -39,7 +39,7 @@
                     <th>Nome</th>
                     <th>Contato</th>
                     <th>Mensageiro</th>
-                    <th>Ações</th>
+                    <th class="text-end">Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,7 +52,7 @@
                         </a>
                     </td>
                     <td>{{ cliente.contato }}</td>
-                    <td>{{ cliente.mensageiro_nome }}</td>
+                    <td>{{ cliente.mensageiro.nome }}</td>
                     <td>
                         <div class="btn-group float-end">
                             <a href="{% url 'editarcliente' cliente.id %}" class="btn btn-primary">&#x270D;</a>

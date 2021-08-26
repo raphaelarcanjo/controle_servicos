@@ -35,7 +35,7 @@
 
     <hr>
 
-    {% if servicos %}
+    {% if clienteservico %}
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -48,36 +48,29 @@
                 </tr>
             </thead>
             <tbody>
-                {% for servico in servicos %}
+                {% for cs in clienteservico %}
                     <tr>
                         <td>
-                            {% if servico.cliente %}
-                                <a href="{% url 'editarcliente' servico.cliente %}">{{ servico.nome }}</a>
+                            {% if cs.cliente %}
+                                <a href="{% url 'editarcliente' cs.cliente.id %}">{{ cs.cliente.nome }}</a>
                             {% else %}
-                                {{ servico.nome }}
+                                {{ cs.cliente.nome }}
                             {% endif %}
                         </td>
                         <td>
-                            <a href="{% url 'editarservico' servico.id %}">{{ servico.tipo }}</a>
+                            <a href="{% url 'editarservico' cs.servico.id %}">{{ cs.servico.tipo }}</a>
                         </td>
-                        <td class="text-right">R$ {{ servico.valor|floatformat:2 }}</td>
+                        <td class="text-right">R$ {{ cs.servico.valor|floatformat:2 }}</td>
                         <td>
-                            <select class="form-select" id="pago">
-                                <option value="1" {% if servico.pago is True %}selected=""{% endif %}>Sim</option>
-                                <option value="0" {% if servico.pago is False %}selected=""{% endif %}>Não</option>
-                            </select>
+                            {% if cs.servico.pago %}Sim{% else %}Não{% endif %}
                         </td>
                         <td>
-                            <select class="form-select" id="status">
-                                {% for stat in status %}
-                                    <option value="{{ stat.id }}" {% if servico.status == stat.id %}selected=""{% endif %}>{{ stat.nome }}</option>
-                                {% endfor %}
-                            </select>
+                            {{ cs.servico.status.nome }}
                         </td>
                         <td class="text-end">
                             <div class="btn-group">
-                                <a href="{% url 'editarservico' servico.id %}" class="btn btn-primary" title="Editar">&#x270D;</a>
-                                <a href="{% url 'removerservico' servico.id %}" class="btn btn-danger" title="Deletar">&#x267B;</a>
+                                <a href="{% url 'editarservico' cs.servico.id %}" class="btn btn-primary" title="Editar">&#x270D;</a>
+                                <a href="{% url 'removerservico' cs.servico.id %}" class="btn btn-danger" title="Deletar">&#x267B;</a>
                             </div>
                         </td>
                     </tr>
