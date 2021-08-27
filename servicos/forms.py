@@ -2,18 +2,21 @@ from django import forms
 from . import models
 
 
-mensageiros = models.Mensageiro.objects.all().order_by('nome')
-clientes = models.Cliente.objects.all().order_by('nome')
-status = models.StatusServico.objects.all().order_by('nome')
-
-
 class ClienteForm(forms.Form):
-    choices = [('', 'Selecione')]
 
-    for mensageiro in mensageiros:
-        choices.append((mensageiro.id, mensageiro.nome,))
-    MENSAGEIROS = tuple(choices)
+    def __init__(self, *args, **kwargs):
+        super(ClienteForm, self).__init__(*args, **kwargs)
 
+        mensageiros = models.Mensageiro.objects.all().order_by('nome')
+
+        choices = [('', 'Selecione')]
+
+        for mensageiro in mensageiros:
+            choices.append((mensageiro.id, mensageiro.nome,))
+        MENSAGEIROS = tuple(choices)
+
+        self.fields['mensageiro'].choices = MENSAGEIROS
+    
     nome = forms.CharField(
         widget=forms.TextInput(
             attrs={'class': 'form-control'}
@@ -40,7 +43,6 @@ class ClienteForm(forms.Form):
     )
 
     mensageiro = forms.ChoiceField(
-        choices=MENSAGEIROS,
         widget=forms.Select(
             attrs={'class': 'form-select'}
         ),
@@ -50,17 +52,29 @@ class ClienteForm(forms.Form):
 
 
 class ServicoForm(forms.Form):
-    choices = []
 
-    for cliente in clientes:
-        choices.append((cliente.id, cliente.nome,))
-    CLIENTES = tuple(choices)
+    def __init__(self, *args, **kwargs):
+        super(ServicoForm, self).__init__(*args, **kwargs)
+        
+        clientes = models.Cliente.objects.all().order_by('nome')
 
-    choices = [('', 'Selecione')]
+        choices = []
 
-    for stat in status:
-        choices.append((stat.id, stat.nome,))
-    STATUS = tuple(choices)
+        for cliente in clientes:
+            choices.append((cliente.id, cliente.nome,))
+        CLIENTES = tuple(choices)
+
+        self.fields['cliente'].choices = CLIENTES
+
+        status = models.StatusServico.objects.all().order_by('nome')
+
+        choices = [('', 'Selecione')]
+
+        for stat in status:
+            choices.append((stat.id, stat.nome,))
+        STATUS = tuple(choices)
+
+        self.fields['status'].choices = STATUS
 
     tipo = forms.CharField(
         widget=forms.TextInput(
@@ -92,7 +106,6 @@ class ServicoForm(forms.Form):
     )
 
     cliente = forms.ChoiceField(
-        choices=CLIENTES,
         widget=forms.Select(
             attrs={'class': 'form-select', 'required': True}
         ),
@@ -101,7 +114,6 @@ class ServicoForm(forms.Form):
     )
 
     status = forms.ChoiceField(
-        choices=STATUS,
         widget=forms.Select(
             attrs={'class': 'form-select', 'required': True}
         ),

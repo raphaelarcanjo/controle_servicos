@@ -161,18 +161,17 @@ def editarCliente(request, cliente_id):
 
 
 def removerServico(request, servico_id):
-    servico = models.Servico.objects.filter(id=servico_id).values()
-
-    if servico:
-        servico = servico[0]
-    else:
-        messages.error(request, 'Serviço não encontrado')
-        return redirect('home')
-
     if request.method == 'POST':
         models.Servico.objects.filter(id=servico_id).delete()
-        return redirect('home')
+        return redirect('novoservico')
 
+    try:
+        servico = models.ClienteServico.objects.filter(servico_id=servico_id).select_related('servico','cliente').get()
+    except models.ClienteServico.DoesNotExist:
+        messages.error(request, 'Serviço não encontrado')
+        return redirect('novoservico')
+
+    # return HttpResponse(servico)
     data = {
         'servico': servico
     }
@@ -181,17 +180,15 @@ def removerServico(request, servico_id):
 
 
 def removerCliente(request, cliente_id):
-    cliente = models.Cliente.objects.filter(id=cliente_id).values()
-
-    if cliente:
-        cliente = cliente[0]
-    else:
-        messages.error(request, 'Cliente não encontrado')
-        return redirect('home')
-
     if request.method == 'POST':
         models.Cliente.objects.filter(id=cliente_id).delete()
-        return redirect('home')
+        return redirect('novocliente')
+
+    try:
+        cliente = models.Cliente.objects.filter(id=cliente_id).select_related('mensageiro').get()
+    except models.Cliente.DoesNotExist:
+        messages.error(request, 'Cliente não encontrado')
+        return redirect('novocliente')
 
     data = {
         'cliente': cliente
