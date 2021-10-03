@@ -220,3 +220,13 @@ def relatorio(request):
     }
 
     return render(request, 'relatorio.html', data)
+
+def admin(request):
+    return render(request, 'admin')
+
+def adicionarMensageiro(request):
+    data = {}
+    return render(request, 'adicionar_mensageiro', data)
+
+def config(request):
+    return render(request, 'config.html')

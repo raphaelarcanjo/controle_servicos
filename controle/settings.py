@@ -56,7 +56,12 @@ ROOT_URLCONF = 'controle.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            'templates',
+            'servicos/templates/cliente',
+            'servicos/templates/servico',
+            'servicos/templates/config'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
