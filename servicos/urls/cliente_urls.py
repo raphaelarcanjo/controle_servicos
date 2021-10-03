@@ -1,7 +1,8 @@
 from django.urls import path
-from servicos import views
+from servicos.views import ClienteView as views
 
 
+app_name = 'cliente'
 urlpatterns = [
     path('novocliente', views.adicionarCliente, name='novocliente'),
     path('editarcliente/<int:cliente_id>', views.editarCliente, name='editarcliente'),

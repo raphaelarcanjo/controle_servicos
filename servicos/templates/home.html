@@ -3,9 +3,9 @@
 {% block content %}
     <h1>Controle de serviços</h1>
     <div class="btn-group" role="group">
-        <a href="cliente/novocliente" class="btn btn-primary mb-3">&#x1F465; Clientes</a>
-        <a href="servico/novoservico" class="btn btn-primary mb-3">&#x1F4E6; Serviços</a>
-        <a href="relatorio" class="btn btn-primary mb-3">&#x1F4B2; Relatório</a>
-        <a href="config" class="btn btn-secondary mb-3">&#x1F527; Configurações</a>
+        <a href="{% url 'cliente:novocliente' %}" class="btn btn-primary mb-3">&#x1F465; Clientes</a>
+        <a href="{% url 'servico:novoservico' %}" class="btn btn-primary mb-3">&#x1F4E6; Serviços</a>
+        <a href="{% url 'home:relatorio' %}" class="btn btn-primary mb-3">&#x1F4B2; Relatório</a>
+        <a href="{% url 'home:config' %}" class="btn btn-secondary mb-3">&#x1F527; Configurações</a>
     </div>
 {% endblock content %}

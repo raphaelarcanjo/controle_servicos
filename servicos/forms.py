@@ -1,5 +1,5 @@
 from django import forms
-from . import models
+from servicos import models
 
 
 class ClienteForm(forms.Form):

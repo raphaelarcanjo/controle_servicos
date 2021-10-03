@@ -10,7 +10,7 @@
 <form action="" method="post">
     {% csrf_token %}
     <input type="hidden" name="cliente_id" value="{{ cliente.id }}">
-    <a href="{% url 'novocliente' %}" class="btn btn-danger">Não</a>
+    <a href="{% url 'cliente:novocliente' %}" class="btn btn-danger">Não</a>
     <button type="submit" class="btn btn-primary float-end">Sim</button>
 </form>
 {% endblock content %}

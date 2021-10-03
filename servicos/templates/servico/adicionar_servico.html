@@ -29,7 +29,7 @@
 
         {% endfor %}
 
-        <a href="{% url 'home' %}" class="btn btn-danger">Voltar</a>
+        <a href="{% url 'home:home' %}" class="btn btn-danger">Voltar</a>
         <input type="submit" value="Salvar" class="btn btn-primary float-end">
     </form>
 
@@ -52,13 +52,13 @@
                     <tr>
                         <td>
                             {% if cs.cliente %}
-                                <a href="{% url 'editarcliente' cs.cliente.id %}">{{ cs.cliente.nome }}</a>
+                                <a href="{% url 'cliente:editarcliente' cs.cliente.id %}">{{ cs.cliente.nome }}</a>
                             {% else %}
                                 {{ cs.cliente.nome }}
                             {% endif %}
                         </td>
                         <td>
-                            <a href="{% url 'editarservico' cs.servico.id %}">{{ cs.servico.tipo }}</a>
+                            <a href="{% url 'servico:editarservico' cs.servico.id %}">{{ cs.servico.tipo }}</a>
                         </td>
                         <td class="text-right">R$ {{ cs.servico.valor|floatformat:2 }}</td>
                         <td>
@@ -69,8 +69,8 @@
                         </td>
                         <td class="text-end">
                             <div class="btn-group">
-                                <a href="{% url 'editarservico' cs.servico.id %}" class="btn btn-primary" title="Editar">&#x270D;</a>
-                                <a href="{% url 'removerservico' cs.servico.id %}" class="btn btn-danger" title="Deletar">&#x267B;</a>
+                                <a href="{% url 'servico:editarservico' cs.servico.id %}" class="btn btn-primary" title="Editar">&#x270D;</a>
+                                <a href="{% url 'servico:removerservico' cs.servico.id %}" class="btn btn-danger" title="Deletar">&#x267B;</a>
                             </div>
                         </td>
                     </tr>

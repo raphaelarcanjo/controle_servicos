@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <a href="{% url 'home' %}" class="btn btn-danger">Voltar</a>
+        <a href="{% url 'home:home' %}" class="btn btn-danger">Voltar</a>
         <input type="submit" value="Salvar" class="btn btn-primary float-end">
     </form>
 
@@ -47,7 +47,7 @@
                 <tr>
                     <td>{{ cliente.id }}</td>
                     <td>
-                        <a href="{% url 'editarcliente' cliente.id %}">
+                        <a href="{% url 'cliente:editarcliente' cliente.id %}">
                             {{ cliente.nome }}
                         </a>
                     </td>
@@ -55,8 +55,8 @@
                     <td>{{ cliente.mensageiro.nome }}</td>
                     <td>
                         <div class="btn-group float-end">
-                            <a href="{% url 'editarcliente' cliente.id %}" class="btn btn-primary">&#x270D;</a>
-                            <a href="{% url 'removercliente' cliente.id %}" class="btn btn-danger">&#x267B;</a>
+                            <a href="{% url 'cliente:editarcliente' cliente.id %}" class="btn btn-primary">&#x270D;</a>
+                            <a href="{% url 'cliente:removercliente' cliente.id %}" class="btn btn-danger">&#x267B;</a>
                         </div>
                     </td>
                 </tr>

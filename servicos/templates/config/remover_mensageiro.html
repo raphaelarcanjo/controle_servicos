@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Mensageiros{% endblock title %}
+
+{% block content %}
+<h3>Tem certeza que deseja remover o mensageiro?</h3>
+<p>ID: {{ mensageiro.id }}</p>
+<p>Nome: {{ mensageiro.nome }}</p>
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="mensageiro_id" value="{{ mensageiro.id }}">
+    <a href="{% url 'home:config' %}" class="btn btn-danger">Não</a>
+    <button type="submit" class="btn btn-primary float-end">Sim</button>
+</form>
+{% endblock content %}

@@ -1,1 +1,72 @@
 {% extends 'base.html' %}
+
+{% block content %}
+    <h1>Controle de serviços</h1>
+    <div class="btn-group" role="group">
+        <a href="{% url 'config:adicionarmensageiro' %}" class="btn btn-primary mb-3">&#x1F4F1; Adicionar mensageiro</a>
+        <a href="{% url 'config:adicionarstatus' %}" class="btn btn-primary mb-3">&#x1F4E3; Adicionar status para serviços</a>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <h4>Mensageiros cadastrados</h4>
+            <hr>
+            {% if mensageiros %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="col-1">ID</th>
+                            <th>Nome</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mensageiro in mensageiros %}
+                        <tr>
+                            <td>{{ mensageiro.id }}</td>
+                            <td>{{ mensageiro.nome }}</td>
+                            <td class="text-end"><a href="{% url 'config:removermensageiro' mensageiro.id %}" class="btn btn-danger btn-sm">Remover</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="alert alert-info">
+                    Nenhum mensageiro cadastrado.
+                </p>
+            {% endif %}
+        </div>
+        <div class="col-12 col-md-6">
+            <h4>Status cadastrados</h4>
+            <hr>
+            {% if status %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="col-1">ID</th>
+                            <th>Nome</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in status %}
+                        <tr>
+                            <td>{{ stat.id }}</td>
+                            <td>{{ stat.nome }}</td>
+                            <td class="text-end"><a href="{% url 'config:removerstatus' stat.id %}" class="btn btn-danger btn-sm">Remover</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="alert alert-info">
+                    Nenhum status cadastrado.
+                </p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <a href="{% url 'home:home' %}" class="btn btn-danger">Voltar</a>
+        </div>
+    </div>
+{% endblock content %}

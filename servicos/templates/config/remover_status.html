@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Status de serviço{% endblock title %}
+
+{% block content %}
+<h3>Tem certeza que deseja remover o status?</h3>
+<p>ID: {{ status.id }}</p>
+<p>Nome: {{ status.nome }}</p>
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="status_id" value="{{ status.id }}">
+    <a href="{% url 'home:config' %}" class="btn btn-danger">Não</a>
+    <button type="submit" class="btn btn-primary float-end">Sim</button>
+</form>
+{% endblock content %}
