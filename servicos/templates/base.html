@@ -21,10 +21,10 @@
         {% endblock header %}
         {% if messages %}
             {% for message in messages %}
-                <ul class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
-                    <li>{{ message }}</li>
+                <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message|safe }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </ul>
+                </div>
             {% endfor %}
         {% endif %}
     </header>

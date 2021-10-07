@@ -1,3 +1,4 @@
+from django.contrib.messages.api import debug
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -47,7 +48,8 @@ class ClienteView:
             form = forms.ClienteForm(request.POST)
             if form.is_valid():
                 cliente = models.Cliente()
-                mensageiro = models.Mensageiro.objects.get(id=request.POST.get('mensageiro'))
+                mensageiro_id = request.POST.get('mensageiro')
+                mensageiro = models.Mensageiro.objects.get(id=mensageiro_id) if mensageiro_id else None
                 cliente.nome = request.POST.get('nome')
                 cliente.contato = request.POST.get('contato')
                 cliente.flag_mensageiro = True if request.POST.get('flag_mensageiro') else False
@@ -138,8 +140,14 @@ class ServicoView:
                 clienteservico.save()
 
         clientes = models.Cliente.objects.all()
-        form = forms.ServicoForm({'data': datetime.now().strftime('%Y-%m-%d')})
         status = models.StatusServico.objects.all()
+        if not clientes:
+            messages.error(request, 'Por favor, antes de cadastrar serviços, cadastre <b>clientes</b>!')
+        if not status:
+            messages.error(request, 'Por favor, antes de cadastrar serviços, cadastre os <b>status</b>!')
+        if messages.get_messages(request):
+            return redirect('home:home')
+        form = forms.ServicoForm({'data': datetime.now().strftime('%Y-%m-%d')})
         clienteservico = models.ClienteServico.objects.all().select_related('servico', 'cliente')
         total = 0
         liquido = 0
